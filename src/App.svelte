@@ -17,7 +17,7 @@
   }
 
   const addDecimalPoint = () => {
-    if (num.search(".") !== -1) return;
+    if (num.search(/\./) !== -1) return;
     num += "."
   }
 
@@ -133,7 +133,9 @@
 <style>
   .main {
     height: 100vh;
-    aspect-ratio: 9 / 16;
+    /* aspect-ratio: 9 / 16; */
+    max-width: 640px;
+    width: 100vw;
     background-color: #001E34;
 
     display: flex;
@@ -170,6 +172,7 @@
     align-items: center;
     justify-content: center;
     background-color: #002B4A;
+    color: #ffffff;
     cursor: pointer;
     user-select: none;
     border-radius: 0.25rem;
