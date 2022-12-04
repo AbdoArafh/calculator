@@ -1,4 +1,7 @@
 <script lang="ts">
+  // lifecycle
+  import { onMount } from "svelte";
+
   // utils
   import classNames from "classnames";
 
@@ -89,7 +92,30 @@
       symbol: ".",
       callback: addDecimalPoint,
     }),
-  ]
+  ];
+
+  onMount(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      Array.from(Array(10)).map((_, i) => i.toString()).forEach(i => {
+        if (event.key === i) addNumber(i)();
+      });
+
+      if (event.key === ".") addDecimalPoint();
+    };
+
+    const handleKeyUp = (event: KeyboardEvent) => {
+      if (event.key === "Backspace") backspace();
+      if (event.key.toLowerCase() === "c") clear();
+    }
+
+    window.addEventListener("keypress", handleKeyPress);
+    window.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      window.removeEventListener("keypress", handleKeyPress);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
+  });
 </script>
 
 <main class="main">
@@ -99,7 +125,7 @@
 
   <div class="body"> 
     {#each buttons as button}
-      <button class={classNames("button", {elongated: button.elongated})} on:click={button.callback}>{button.symbol}</button>
+      <button class={classNames("button", {elongated: button.elongated})} on:click={button.callback} id={"key-" + button.symbol}>{button.symbol}</button>
     {/each}
   </div>
 </main>
