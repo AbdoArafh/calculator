@@ -3,7 +3,7 @@ type ButtonCallback = () => void;
 
 export default class Button {
     type: ButtonType;
-    elongated: boolean;
+    elongated?: boolean = false;
     callback: ButtonCallback;
     symbol: string
 

@@ -8,17 +8,54 @@
   // lib
   import Button from "./lib/Button";
 
+  type ArthemticOperation = "+" | "-" | "*" | "/"
+
   let num = "";
+  let prev_num = "";
+  let reset_flag = false
+  let latest_operation = "+"
+
+  const stringToNumber = (n: string) => {
+    return Number(eval(n.replace("%", "/100")))
+  }
+
+  const performOperation = (operation?: ArthemticOperation) => {
+    if (operation) latest_operation = operation;
+    if (reset_flag) {
+      num = "";
+      prev_num = "";
+      reset_flag = false;
+      return
+    }
+    if (prev_num) {
+      num = window.eval(`${stringToNumber(prev_num)} ${latest_operation} ${stringToNumber(num)}`).toString()
+      reset_flag = true
+      return
+    }
+    prev_num = num.slice(0)
+    num = ""
+  }
+
+  const addChar = (char: string) => {
+    if (reset_flag) {
+      num = char;
+      reset_flag = false;
+      prev_num = "";
+      return;
+    }
+    if (num.search(/%/) !== -1) return; 
+    num += char
+  }
 
   const addNumber = (char: string) => {
     return () => {
-      num += char;
+      addChar(char);
     }
   }
 
   const addDecimalPoint = () => {
     if (num.search(/\./) !== -1) return;
-    num += "."
+    addChar(".")
   }
 
   const clear = () => {
@@ -27,6 +64,11 @@
 
   const backspace = () => {
     num = num.slice(0, num.length - 1)
+  }
+
+  const addPercent = () => {
+    if (num.search(/%/) !== -1) return;
+    addChar("%")
   }
 
   const createNumberRow = (row: string[]): Button[] => {
@@ -46,12 +88,12 @@
     new Button({
       type: "operation",
       symbol: "÷",
-      callback: () => {},
+      callback: () => performOperation("/"),
     }),
     new Button({
       type: "operation",
       symbol: "x",
-      callback: () => {},
+      callback: () => performOperation("*"),
     }),
     new Button({
       type: "operation",
@@ -62,25 +104,25 @@
     new Button({
       type: "operation",
       symbol: "-",
-      callback: () => {},
+      callback: () => performOperation("-"),
     }),
     ...createNumberRow(["4", "5", "6"]),
     new Button({
       type: "operation",
       symbol: "+",
-      callback: () => {},
+      callback: () => performOperation("+")
     }),
     ...createNumberRow(["1", "2", "3"]),
     new Button({
       type: "operation",
       symbol: "=",
-      callback: () => {},
+      callback: () => performOperation(),
       elongated: true
     }),
     new Button({
       type: "operation",
       symbol: "%",
-      callback: () => {},
+      callback: addPercent,
     }),
     new Button({
       type: "number",
@@ -125,7 +167,7 @@
 
   <div class="body"> 
     {#each buttons as button}
-      <button class={classNames("button", {elongated: button.elongated})} on:click={button.callback} id={"key-" + button.symbol}>{button.symbol}</button>
+      <button class={classNames("button", {elongated: button.elongated})} on:click={button.callback}>{button.symbol}</button>
     {/each}
   </div>
 </main>
