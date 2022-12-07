@@ -22,8 +22,8 @@
   const performOperation = (operation?: ArthemticOperation) => {
     if (operation) latest_operation = operation;
     if (reset_flag) {
+      prev_num = num;
       num = "";
-      prev_num = "";
       reset_flag = false;
       return
     }
@@ -146,6 +146,11 @@
     };
 
     const handleKeyUp = (event: KeyboardEvent) => {
+      if (event.key === "+") performOperation("+");
+      if (event.key === "-") performOperation("-");
+      if (event.key === "*") performOperation("*");
+      if (event.key === "/") performOperation("/");
+      if (event.key === "Enter") performOperation();
       if (event.key === "Backspace") backspace();
       if (event.key.toLowerCase() === "c") clear();
     }
